@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BIG. | 純鈦香水墜飾</title>
+  <style>
+    /* ========== CSS 樣式區塊 ========== */
+    
+    /* 基礎設定 */
+    :root {
+      --bg-color: #FCFCFC;
+      --nav-bg: #000000;
+      --text-main: #1d1d1f;
+      --text-muted: #86868b;
+      --accent: #0071e3; /* Apple 經典藍，用作按鈕點綴 */
+    }
+
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background-color: var(--bg-color);
+      color: var(--text-main);
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* 頂部導覽列 */
+    .navbar {
+      background-color: var(--nav-bg);
+      color: white;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1rem 2rem;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .logo {
+      font-size: 1.5rem;
+      font-weight: 700;
+      letter-spacing: 2px;
+      cursor: pointer;
+    }
+
+    .nav-actions {
+      display: flex;
+      align-items: center;
+    }
+
+    .btn-text {
+      background: none;
+      border: none;
+      color: white;
+      font-size: 0.95rem;
+      cursor: pointer;
+      margin-left: 1.5rem;
+      transition: opacity 0.3s;
+    }
+
+    .btn-text:hover { opacity: 0.7; }
+
+    /* 佈局容器 */
+    .container {
+      display: flex;
+      min-height: calc(100vh - 150px);
+      max-width: 1200px;
+      margin: 0 auto;
+      flex-wrap: wrap; /* 支援手機版排版 */
+    }
+
+    /* 左側分類欄 */
+    .sidebar {
+      width: 220px;
+      padding: 3rem 2rem;
+      border-right: 1px solid #e5e5ea;
+    }
+
+    .category-list {
+      list-style: none;
+      padding: 0;
+    }
+
+    .category-list li {
+      padding: 0.8rem 0;
+      color: var(--text-muted);
+      cursor: pointer;
+      transition: color 0.3s;
+      font-weight: 500;
+    }
+
+    .category-list li.active, .category-list li:hover {
+      color: var(--text-main);
+    }
+
+    .category-list li.disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+    }
+
+    /* 主內容區 */
+    .content {
+      flex: 1;
+      padding: 3rem;
+      position: relative;
+      min-width: 300px;
+    }
+
+    .view-section { display: none; }
+    .view-section.active { display: block; animation: fadeIn 0.5s ease; }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(15px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* 首頁 Hero 區塊 */
+    .hero { text-align: center; margin-bottom: 4rem; }
+    .hero-title { font-size: 3rem; letter-spacing: -0.02em; margin-bottom: 1rem; }
+    .hero-subtitle { font-size: 1.1rem; color: var(--text-muted); max-width: 600px; margin: 0 auto 3rem; line-height: 1.6; }
+
+    .product-grid { display: flex; justify-content: center; gap: 2rem; flex-wrap: wrap; }
+    .product-card {
+      width: 300px;
+      cursor: pointer;
+      transition: transform 0.3s ease;
+      text-align: center;
+    }
+    .product-card:hover { transform: scale(1.03); }
+    .product-card h3 { margin-bottom: 0.5rem; font-size: 1.2rem; }
+    .product-card p { color: var(--text-muted); margin-top: 0; }
+    
+    .card-img-placeholder {
+      background: #f5f5f7;
+      height: 350px;
+      border-radius: 18px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      color: var(--text-muted);
+      margin-bottom: 1rem;
+      font-size: 0.9rem;
+    }
+
+    /* 商品詳情頁 */
+    .breadcrumb { font-size: 0.9rem; color: var(--text-muted); margin-bottom: 2.5rem; }
+    .breadcrumb span { cursor: pointer; transition: color 0.2s; }
+    .breadcrumb span:hover { color: var(--text-main); }
+
+    .product-detail-layout { display: flex; gap: 4rem; flex-wrap: wrap; }
+    .product-images { flex: 1; min-width: 300px; }
+    .main-image { 
+      background: #f5f5f7; 
+      height: 500px; 
+      border-radius: 24px; 
+      display: flex; 
+      align-items: center; 
+      justify-content: center; 
+      color: var(--text-muted); 
+      font-size: 1rem;
+    }
+    .product-info { flex: 1; display: flex; flex-direction: column; justify-content: center; min-width: 300px; }
+    .product-info h2 { font-size: 2.2rem; margin-top: 0; margin-bottom: 0.5rem; }
+    .price { font-size: 1.5rem; font-weight: 600; margin-bottom: 2rem; color: var(--text-main); }
+
+    .features ul { padding-left: 1.2rem; line-height: 1.8; color: var(--text-muted); margin-bottom: 2rem;}
+    .features strong { color: var(--text-main); }
+
+    .purchase-actions { margin-top: 1rem; background: #fff; padding: 2rem; border-radius: 18px; box-shadow: 0 4px 24px rgba(0,0,0,0.04); border: 1px solid #f0f0f0; }
+    .quantity-selector { display: flex; align-items: center; gap: 1rem; margin-bottom: 1.5rem; }
+    .quantity-selector button { width: 36px; height: 36px; border-radius: 50%; border: 1px solid #d2d2d7; background: white; cursor: pointer; font-size: 1.2rem; display: flex; align-items: center; justify-content: center; transition: background 0.2s; }
+    .quantity-selector button:hover { background: #f5f5f7; }
+    .quantity-selector input { width: 40px; text-align: center; border: none; font-size: 1.1rem; font-weight: 600; outline: none; }
+    .total-price { font-size: 1.2rem; font-weight: 600; margin-bottom: 1.5rem; }
+
+    .btn-primary {
+      width: 100%;
+      padding: 1rem;
+      background-color: var(--nav-bg);
+      color: white;
+      border: none;
+      border-radius: 980px; /* Apple style pill button */
+      font-size: 1.1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background-color 0.3s, transform 0.1s;
+    }
+    .btn-primary:hover { background-color: #333; }
+    .btn-primary:active { transform: scale(0.98); }
+
+    /* 底部資訊 */
+    footer {
+      background-color: var(--nav-bg);
+      color: white;
+      padding: 3rem 2rem;
+      text-align: center;
+    }
+    .footer-brand { font-size: 1.2rem; font-weight: 700; margin-bottom: 1rem; letter-spacing: 1px; }
+    .footer-contact p { margin: 0.5rem 0; color: #a1a1a6; font-size: 0.95rem; }
+    .footer-contact a { color: white; text-decoration: none; transition: opacity 0.2s;}
+    .footer-contact a:hover { opacity: 0.7; }
+
+    /* 響應式設計 (手機版適配) */
+    @media (max-width: 768px) {
+      .container { flex-direction: column; }
+      .sidebar { width: auto; border-right: none; border-bottom: 1px solid #e5e5ea; padding: 2rem; }
+      .category-list { display: flex; gap: 1.5rem; overflow-x: auto; white-space: nowrap; }
+      .content { padding: 2rem 1.5rem; }
+      .product-detail-layout { gap: 2rem; }
+      .main-image { height: 350px; }
+      .hero-title { font-size: 2.2rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ========== HTML 結構區塊 ========== -->
+  
+  <nav class="navbar">
+    <div class="logo" onclick="showSection('home')">BIG.</div>
+    <div class="nav-actions">
+      <button id="loginBtn" class="btn-text">Google 登入 / 註冊</button>
+      <button id="cartBtn" class="btn-text">購物車 (<span id="cartCount">0</span>)</button>
+    </div>
+  </nav>
+
+  <div class="container">
+    <!-- 左側分類欄 -->
+    <aside class="sidebar">
+      <h3 style="margin-top: 0;">商品分類</h3>
+      <ul class="category-list">
+        <li class="active" onclick="showSection('home')">純鈦墜飾系列</li>
+        <li class="disabled">純鈦耳環 (即將推出)</li>
+        <li class="disabled">專屬香氛精油</li>
+      </ul>
+    </aside>
+
+    <!-- 右側主內容區 -->
+    <main class="content">
+      
+      <!-- 首頁 / 新品上市 -->
+      <section id="home-section" class="view-section active">
+        <div class="hero">
+          <h1 class="hero-title">純鈦香水墜飾</h1>
+          <p class="hero-subtitle">航太級純鈦打造，精密微孔鎖香。<br>告別肌膚過敏，重新定義你的隨身氣息。</p>
+          
+          <div class="product-grid">
+            <div class="product-card" onclick="showSection('detail')">
+              <div class="card-img-placeholder">
+                
+              </div>
+              <h3>初代純鈦盲盒版</h3>
+              <p>NT$ 2,980</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 商品詳情頁 -->
+      <section id="detail-section" class="view-section">
+        <div class="breadcrumb">
+          <span onclick="showSection('home')">首頁</span> > <span onclick="showSection('home')">純鈦墜飾系列</span> > <span>初代純鈦盲盒版</span>
+        </div>
+        
+        <div class="product-detail-layout">
+          <div class="product-images">
+            <div class="main-image">
+              
+            </div>
+          </div>
+          <div class="product-info">
+            <h2>初代純鈦盲盒版</h2>
+            <p style="color: var(--text-muted); margin-top: 0;">Titanium Edition</p>
+            <p class="price" id="unitPrice" data-price="2980">NT$ 2,980</p>
+            
+            <div class="features">
+              <ul>
+                <li><strong>極致親膚：</strong> 醫療級純鈦，拒絕香水酒精接觸皮膚與過敏，遠離黑色素沉澱。</li>
+                <li><strong>持久鎖香：</strong> 內部精密微孔結構設計，留香時間大幅超越體溫揮發。</li>
+                <li><strong>EDC 臻品：</strong> 迷戀精密機械公差與陽極發色，極客專屬私密配飾。</li>
+                <li><strong>隨時解壓：</strong> 職場與社交場合，不著痕跡地品味專屬香氣，緩解焦慮。</li>
+              </ul>
+            </div>
+
+            <div class="purchase-actions">
+              <div class="quantity-selector">
+                <button onclick="updateQty(-1)">-</button>
+                <input type="number" id="qtyInput" value="1" min="1" readonly>
+                <button onclick="updateQty(1)">+</button>
+              </div>
+              <p class="total-price">總計: <span id="totalPrice">NT$ 2,980</span></p>
+              <button id="addToCartBtn" class="btn-primary" onclick="addToCart()">加入購物車</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <footer>
+    <div class="footer-content">
+      <div class="footer-brand">Building Ideas Group (BIG)</div>
+      <div class="footer-contact">
+        <p>聯絡我們：BIG@gmail.com</p>
+        <p>官方 Instagram：<a href="https://instagram.com/" target="_blank">@BIG</a></p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ========== JavaScript 邏輯區塊 ========== -->
+  <script>
+    // 模擬使用者狀態
+    let isLoggedIn = false;
+    let cartItems = 0;
+
+    // 頁面切換邏輯 (一頁式路由 SPA)
+    function showSection(sectionId) {
+      // 隱藏所有區塊
+      document.querySelectorAll('.view-section').forEach(sec => {
+        sec.classList.remove('active');
+      });
+      // 顯示指定區塊
+      document.getElementById(`${sectionId}-section`).classList.add('active');
+      
+      // 若切換回首頁，重置商品數量
+      if(sectionId === 'home') {
+        document.getElementById('qtyInput').value = 1;
+        calculateTotal(1);
+      }
+      
+      // 切換時畫面平滑回到頂部
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    // 模擬 Google 登入
+    document.getElementById('loginBtn').addEventListener('click', function() {
+      if (!isLoggedIn) {
+        // 實際開發中，這裡會呼叫 Google OAuth API 或導向後端認證路由
+        alert("正在重導向至 Google 登入頁面...\n(模擬登入成功)");
+        isLoggedIn = true;
+        this.innerText = "會員中心 (已登入)";
+      } else {
+        alert("歡迎回到會員中心！\n（這裡未來可以放置歷史訂單、個人資料等功能）");
+      }
+    });
+
+    // 模擬查看購物車
+    document.getElementById('cartBtn').addEventListener('click', function() {
+      if (cartItems === 0) {
+        alert("您的購物車目前是空的喔！");
+      } else {
+        alert(`您的購物車目前有 ${cartItems} 件商品。\n(即將導向結帳流程)`);
+      }
+    });
+
+    // 數量與價格計算
+    function updateQty(change) {
+      const input = document.getElementById('qtyInput');
+      let newQty = parseInt(input.value) + change;
+      if (newQty >= 1) {
+        input.value = newQty;
+        calculateTotal(newQty);
+      }
+    }
+
+    function calculateTotal(qty) {
+      const priceElement = document.getElementById('unitPrice');
+      const price = parseInt(priceElement.getAttribute('data-price'));
+      const total = price * qty;
+      // 格式化為台幣顯示 (加上千分位逗號)
+      document.getElementById('totalPrice').innerText = `NT$ ${total.toLocaleString()}`;
+    }
+
+    // 加入購物車
+    function addToCart() {
+      if (!isLoggedIn) {
+        alert("請先使用上方「Google 登入 / 註冊」才能購買喔！");
+        // 讓登入按鈕閃爍提示使用者
+        const loginBtn = document.getElementById('loginBtn');
+        loginBtn.style.color = "#0071e3";
+        setTimeout(() => loginBtn.style.color = "white", 300);
+        setTimeout(() => loginBtn.style.color = "#0071e3", 600);
+        setTimeout(() => loginBtn.style.color = "white", 900);
+        return;
+      }
+      
+      const qty = parseInt(document.getElementById('qtyInput').value);
+      cartItems += qty;
+      document.getElementById('cartCount').innerText = cartItems;
+      
+      const btn = document.getElementById('addToCartBtn');
+      const originalText = btn.innerText;
+      
+      // 按鈕視覺回饋
+      btn.innerText = "已加入購物車 ✓";
+      btn.style.backgroundColor = "#28a745"; // 變為成功綠色
+      
+      setTimeout(() => {
+        btn.innerText = "繼續選購";
+        btn.style.backgroundColor = "var(--nav-bg)"; // 恢復黑色
+      }, 2000);
+    }
+  </script>
+</body>
+</html>
